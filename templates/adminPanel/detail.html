@@ -1,0 +1,133 @@
+{% extends 'adminPanel/parent.html' %}
+
+{% block main %}
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-rad ius-lg pt-4 pb-3 title-me">
+                            <h6 class="text-white text-capitalize ps-3">Idea from << {{ idea.user }} >></h6>
+                        </div>
+
+                        <div class="card-body px-0 pb-2">
+                            <div class="table-responsive p-0">
+                                <h4>Content:</h4>
+                                <p class="idea-content">{{ idea.content }}</p>
+                                <h4>Category:</h4>
+                                <div id="cat-box">
+                                    <select name="" id="idea-cat">
+                                        {% for i in cats %}
+                                            <option {% if not idea.category and i.name == 'None' or idea.category.name == i.name %}selected{% endif %}
+                                                    value="{{ i.id }}">{{ i.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button onclick="set_cat()" class="btn btn-info">Save</button>
+                                </div>
+                                <h4>Current Status:</h4>
+                                <div class="idea-status">
+                                    <p id="idea-main-status" style="color: {% if idea.status == 'P' %}blue
+                                    {% elif idea.status == 'R' %}red{% elif idea.status == 'A' %}green
+                                    {% endif %};">{{ idea.get_status }}</p>
+                                    <div id="status-btn">
+                                        {% if idea.status == 'P' %}
+                                            <button onclick="change_status('A')" class="btn btn-success">Approve
+                                            </button>
+                                            <button onclick="change_status('R')" class="btn btn-danger">Reject</button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="footer py-4  ">
+                <div class="container-fluid">
+                    <div class="row align-items-center justify-content-lg-between">
+                        <div class="col-lg-6 mb-lg-0 mb-4">
+                            <div class="copyright text-center text-sm text-muted text-lg-start">
+                                ©
+                                <script>
+                                    document.write(new Date().getFullYear())
+                                </script>
+                                ,
+                                made with <i class="fa fa-heart"></i> by
+                                <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative
+                                    Tim</a>
+                                for a better web.
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+                                <li class="nav-item">
+                                    <a href="https://www.creative-tim.com" class="nav-link text-muted" target="_blank">Creative
+                                        Tim</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="https://www.creative-tim.com/presentation" class="nav-link text-muted"
+                                       target="_blank">About Us</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="https://www.creative-tim.com/blog" class="nav-link text-muted"
+                                       target="_blank">Blog</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="https://www.creative-tim.com/license" class="nav-link pe-0 text-muted"
+                                       target="_blank">License</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+{% endblock main %}
+
+
+{% block js %}
+
+    <script>
+        function change_status(state) {
+            const req = new XMLHttpRequest();
+            req.onload = function () {
+                if (this.status === 200 && this.readyState === 4) {
+                    let element = document.getElementById('idea-main-status')
+                    let btn = document.getElementById('status-btn')
+
+                    if (this.responseText === 'Approved') {
+                        element.innerHTML = 'Approved';
+                        element.style.color = 'green';
+                        btn.style.display = 'none'
+                    } else if (this.responseText === 'Rejected') {
+                        element.innerHTML = 'Rejected'
+                        element.style.color = 'red'
+                        btn.style.display = 'none'
+                    }
+                }
+            }
+            req.open("POST", "/idea/status/change/" + state + "/" + {{ idea.pk }} +"/", true);
+            req.send();
+        }
+
+        function set_cat() {
+            const req = new XMLHttpRequest();
+            let element = document.getElementById("idea-cat");
+            req.onload = function () {
+                if (this.status === 200 && this.readyState === 4) {
+                    if (this.responseText === 'OK') {
+                        element.style.boxShadow = 'green 0 0 17px 3px'
+                    } else {
+                        element.style.boxShadow = 'red 0 0 17px 3px'
+                    }
+                }
+            }
+            req.open("POST", "/idea/cat/change/" + element.options[element.selectedIndex].value + "/" + {{ idea.pk }} +"/", true);
+            req.send();
+        }
+
+    </script>
+
+{% endblock js %}
