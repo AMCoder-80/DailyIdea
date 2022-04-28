@@ -17558,6 +17558,29 @@ pre[class*="language-"] {
 .idea-content{
   margin: 20px;
   text-align: justify;
+  width: 90%;
+  height: 250px;
+  border: none;
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
+  color: #979090;
+  font-size: 20px;
+  border-radius: 10px;
+}
+
+.idea-content:focus{
+  border: none;
+  outline: none;
+}
+
+
+.content-btn{
+  text-align: right;
+}
+
+.content-btn button{
+  margin-right: 2px;
+  border-radius: 10px;
+
 }
 
 .idea-status{
@@ -17594,4 +17617,45 @@ pre[class*="language-"] {
   width: 10%;
   height: 30px;
   line-height: 1px;
+}
+
+.back-btn{
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+.back-btn:hover{
+  color: black;
+}
+
+#id_name{
+  display: block;
+  border-radius: 10px;
+  border: 1px solid gray;
+  width: 95%;
+  height: 35px;
+  margin-top: 20px;
+}
+
+.cat-creator{
+  margin-top: 20px;
+}
+
+.cat-creator input[type='submit']{
+  margin-top: 20px;
+  width: 95%;
+  background-color: green;
+  font-size: 20px;
+  color: white;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  border: none;
+}
+
+.card-holder{
+  display: flex;
+  justify-content: space-between;
 }

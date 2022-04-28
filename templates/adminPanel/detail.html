@@ -8,12 +8,18 @@
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-primary shadow-primary border-rad ius-lg pt-4 pb-3 title-me">
                             <h6 class="text-white text-capitalize ps-3">Idea from << {{ idea.user }} >></h6>
+                            <a class="back-btn" href="{% url 'idea:table' %}">Back</a>
                         </div>
 
                         <div class="card-body px-0 pb-2">
                             <div class="table-responsive p-0">
-                                <h4>Content:</h4>
-                                <p class="idea-content">{{ idea.content }}</p>
+                                <div class="content-box">
+                                    <h4>Content:</h4>
+                                    <textarea class="idea-content" id="content-area">{{ idea.content }}</textarea>
+                                    <div class="content-btn">
+                                        <button onclick="change_content()" class="btn btn-success">Save changes</button>
+                                    </div>
+                                </div>
                                 <h4>Category:</h4>
                                 <div id="cat-box">
                                     <select name="" id="idea-cat">
@@ -108,7 +114,7 @@
                     }
                 }
             }
-            req.open("POST", "/idea/status/change/" + state + "/" + {{ idea.pk }} +"/", true);
+            req.open("POST", "/status/change/" + state + "/" + {{ idea.pk }} +"/", true);
             req.send();
         }
 
@@ -124,7 +130,23 @@
                     }
                 }
             }
-            req.open("POST", "/idea/cat/change/" + element.options[element.selectedIndex].value + "/" + {{ idea.pk }} +"/", true);
+            req.open("POST", "/cat/change/" + element.options[element.selectedIndex].value + "/" + {{ idea.pk }} +"/", true);
+            req.send();
+        }
+
+        function change_content(){
+            let element = document.getElementById("content-area")
+            const req = new XMLHttpRequest();
+            req.onload = function () {
+                if (this.status === 200 && this.readyState === 4) {
+                    if (this.responseText === 'OK') {
+                        element.style.boxShadow = 'green 0 0 17px 3px'
+                    } else {
+                        element.style.boxShadow = 'red 0 0 17px 3px'
+                    }
+                }
+            }
+            req.open("POST", "/content/change/" + element.value + "/" + {{ idea.pk }} +"/", true);
             req.send();
         }
 

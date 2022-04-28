@@ -1,17 +1,21 @@
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.http import HttpResponse
 from . import models
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import DetailView, UpdateView
+from django.views import generic
 import requests
 
 # Create your views here.
 
 success_message = """
-سلام دوست عزیز🙋‍
-ایده شما توسط ادمین تایید شد و با موفقیت در کانال قرار گرفت
-برای مشاهده ایده خودتون میتونید به کانال زیر بپیوندید
+به به!😍
+مژده بدید🎉
+ایده شما توسط ادمین تایید شد و در کانال زیر قرار گرفت😊
 @DailyIdea
+💖هر هفته به بهترین ایده جایزه میدیم🎁
+برای گروه ها و مخاطب هاتون بفرستید😉
+بلکه ایده تون رو لایک کنند و جایزه بگیرید🏆
 """
 
 error_message = """
@@ -25,7 +29,7 @@ TOKEN = "5178760524:AAHwUq8bPzxmkDmO0dXaUqbyAhKC9Fev1pM"
 
 
 @csrf_exempt
-def idea(request):
+def create_idea(request):
     if request.method == 'GET':
         pass
     elif request.method == 'POST':
@@ -34,13 +38,13 @@ def idea(request):
         return HttpResponse("OK")
 
 
-def test(request):
+def index(request):
     ideas = models.Idea.objects.all()
     print(request.resolver_match)
     return render(request, 'adminPanel/index.html', {'ideas': ideas, 'res': request.resolver_match})
 
 
-def test_table(request, status=None):
+def idea(request, status=None):
     print(status)
     if status:
         ideas = models.Idea.objects.filter(status=status)
@@ -83,13 +87,39 @@ def change_cat(request, id, pk):
         return HttpResponse("Method not allowed")
 
 
-class IdeaDetail(DetailView):
+class IdeaDetail(generic.DetailView):
     model = models.Idea
     # fields = ['content', 'category', 'status']
     template_name = 'adminPanel/detail.html'
-    context_object_name = 'idea'
 
     def get_context_data(self, **kwargs):
         context = super(IdeaDetail, self).get_context_data(**kwargs)
         context['cats'] = models.Category.objects.all()
         return context
+
+
+@csrf_exempt
+def change_content(request, content, pk):
+    if request.method == 'POST':
+        idea = models.Idea.objects.get(pk=pk)
+        idea.content = content
+        idea.save()
+        return HttpResponse("OK")
+    else:
+        return HttpResponse("Failed")
+
+
+class CategoryList(generic.ListView):
+    model = models.Category
+    template_name = 'adminPanel/cat_table.html'
+    context_object_name = 'cats'
+
+
+class CreateCategory(generic.CreateView):
+    model = models.Category
+    fields = ['name']
+    success_url = reverse_lazy('idea:cat_views')
+    template_name = 'adminPanel/create_cat.html'
+    context_object_name = 'cat'
+
+

@@ -35,8 +35,8 @@ class Idea(models.Model):
     user = models.CharField(max_length=50, default='AnonymousUser')
     status = models.CharField(choices=CHOICES, max_length=1, default=PENDING)
     chat_id = models.CharField(max_length=100)
-    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL)
-    created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    category = models.ForeignKey(Category, null=True, blank=True, related_name="ideas", on_delete=models.SET_NULL)
+    created = models.DateTimeField(auto_now_add=True)
     objects = models.Manager.from_queryset(MyManager)()
 
     def get_status(self):
