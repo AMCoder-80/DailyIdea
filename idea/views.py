@@ -162,6 +162,9 @@ def get_idea(request, pk):
 
 @csrf_exempt
 def save_req(request):
-    print(request.POST)
+    try:
+        models.Requester.objects.create(**request.POST)
+    except Exception as e:
+        return HttpResponse(e)
 
 
