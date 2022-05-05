@@ -68,15 +68,14 @@ def change_status(request, state, pk):
             if idea.status == 'A':
                 markup = json.dumps({"inline_keyboard": [[
                     {"text": "سرمایه گذارم",
-                     "callback_data": f"invest"},
+                     "callback_data": "invest"},
                     {"text": "براش مشتری دارم",
-                     "callback_data": f"test-{idea.pk}"}
+                     "callback_data": "customer"}
                 ],
-                    {"text": "میتونم ارتقاش بدم",
-                     "callback_data": f"invest-{idea.pk}"},
-                    {"text": "براش مشتری دارم",
-                     "callback_data": f"test-{idea.pk}"}
-                ]})
+                [
+                    {"text": "خریدارم",
+                     "callback_data": "buyer"},
+                ]]})
                 data = {
                     "chat_id": "@IdeaDaily",
                     "text": f"{idea.content} \n {idea.user} \n @IdeaDaily",
@@ -94,7 +93,7 @@ def change_status(request, state, pk):
                 )
             elif idea.status == 'R':
                 data = {
-                    "chat_id": "@IdeaDaily",
+                    "chat_id": idea.chat_id,
                     "text": error_message,
                 }
                 requests.get(
