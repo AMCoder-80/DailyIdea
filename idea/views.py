@@ -4,7 +4,9 @@ from django.http import HttpResponse
 from . import models
 from django.views.decorators.csrf import csrf_exempt
 from django.views import generic
-import requests
+import json, requests
+
+
 
 # Create your views here.
 
@@ -63,12 +65,40 @@ def change_status(request, state, pk):
         if idea.status == 'P':
             idea.status = state
             idea.save()
-            # if idea.status == 'A':
-            #     requests.get(
-            #         f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id={idea.chat_id}&text={success_message}")
-            # elif idea.status == 'R':
-            #     requests.get(
-            #         f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id={idea.chat_id}&text={error_message}")
+            if idea.status == 'A':
+                markup = json.dumps({"inline_keyboard": [[
+                    {"text": "سرمایه گذارم",
+                     "callback_data": f"invest"},
+                    {"text": "براش مشتری دارم",
+                     "callback_data": f"test-{idea.pk}"}
+                ],
+                    {"text": "میتونم ارتقاش بدم",
+                     "callback_data": f"invest-{idea.pk}"},
+                    {"text": "براش مشتری دارم",
+                     "callback_data": f"test-{idea.pk}"}
+                ]})
+                data = {
+                    "chat_id": "@IdeaDaily",
+                    "text": f"{idea.content} \n {idea.user} \n @IdeaDaily",
+                    "reply_markup": markup
+                }
+                data2 = {
+                    "chat_id": idea.chat_id,
+                    "text": success_message,
+                }
+                requests.get(
+                    f"https://api.telegram.org/bot{TOKEN}/sendMessage", data=data
+                )
+                requests.get(
+                    f"https://api.telegram.org/bot{TOKEN}/sendMessage", data=data2
+                )
+            elif idea.status == 'R':
+                data = {
+                    "chat_id": "@IdeaDaily",
+                    "text": error_message,
+                }
+                requests.get(
+                    f"https://api.telegram.org/bot{TOKEN}/sendMessage", data=data)
             return HttpResponse(idea.get_status())
         return HttpResponse('Failed')
     else:
@@ -121,5 +151,13 @@ class CreateCategory(generic.CreateView):
     success_url = reverse_lazy('idea:cat_views')
     template_name = 'adminPanel/create_cat.html'
     context_object_name = 'cat'
+
+
+def get_idea(request, pk):
+    try:
+        idea = models.Idea.objects.get(id=pk)
+        return HttpResponse(f"{idea.user}-{idea.content}-{idea.chat_id}")
+    except Exception as e:
+        return HttpResponse(e)
 
 
