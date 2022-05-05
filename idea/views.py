@@ -78,7 +78,7 @@ def change_status(request, state, pk):
                 ]]})
                 data = {
                     "chat_id": "@IdeaDaily",
-                    "text": f"{idea.content} \n {idea.user} \n @IdeaDaily",
+                    "text": f"{idea.content}\n*{idea.user}\n*@IdeaDaily",
                     "reply_markup": markup
                 }
                 data2 = {
