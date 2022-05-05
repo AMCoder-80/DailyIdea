@@ -161,8 +161,9 @@ def get_idea(request, pk):
 
 @csrf_exempt
 def save_req(request):
-    idea = models.Idea.objects.get(content__icontains=request.POST['content'])
+
     try:
+        idea = models.Idea.objects.get(content__icontains=request.POST['content'])
         req = models.Requester.objects.create(user=request.POST['user'], phone_number=request.POST['phone'], type=request.POST['type'])
         idea.requester.add(req)
     except Exception as e:
