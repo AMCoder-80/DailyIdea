@@ -37,6 +37,7 @@ class Idea(models.Model):
     chat_id = models.CharField(max_length=100)
     category = models.ForeignKey(Category, null=True, blank=True, related_name="ideas", on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
+    requester = models.ManyToManyField('Requester', blank=True)
     objects = models.Manager.from_queryset(MyManager)()
 
     def get_status(self):
@@ -57,3 +58,14 @@ class Idea(models.Model):
 
     def __str__(self):
         return self.user
+
+
+class Requester(models.Model):
+    TYPES = (
+        ('I', 'Investor'),
+        ('B', 'Buyer'),
+        ('C', 'Customer')
+    )
+    user = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=100)
+    type = models.CharField(max_length=5, choices=TYPES)

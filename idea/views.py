@@ -160,4 +160,8 @@ def get_idea(request, pk):
     except Exception as e:
         return HttpResponse(e)
 
+@csrf_exempt
+def save_req(request):
+    print(request.POST)
+
 
