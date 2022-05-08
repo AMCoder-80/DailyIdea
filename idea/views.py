@@ -67,13 +67,13 @@ def change_status(request, state, pk):
             idea.save()
             if idea.status == 'A':
                 markup = json.dumps({"inline_keyboard": [[
-                    {"text": "سرمایه گذارم",
+                    {"text": "من سرمایه گذاری میکنم",
                      "callback_data": "invest"},
-                    {"text": "براش مشتری دارم",
+                    {"text": "من مشتریش رو دارم",
                      "callback_data": "customer"}
                 ],
                 [
-                    {"text": "خریدارم",
+                    {"text": "من اولین مشتریش هستم",
                      "callback_data": "buyer"},
                 ]]})
                 data = {
@@ -124,6 +124,9 @@ class IdeaDetail(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super(IdeaDetail, self).get_context_data(**kwargs)
         context['cats'] = models.Category.objects.all()
+        context['investors'] = models.Requester.objects.filter(idea__pk=self.kwargs['pk'], type='I')
+        context['customers'] = models.Requester.objects.filter(idea__pk=self.kwargs['pk'], type='C')
+        context['buyers'] = models.Requester.objects.filter(idea__pk=self.kwargs['pk'], type='B')
         return context
 
 
@@ -161,12 +164,12 @@ def get_idea(request, pk):
 
 @csrf_exempt
 def save_req(request):
-
     try:
         idea = models.Idea.objects.get(content__icontains=request.POST['content'])
         req = models.Requester.objects.create(user=request.POST['user'], phone_number=request.POST['phone'], type=request.POST['type'])
         idea.requester.add(req)
     except Exception as e:
         return HttpResponse(e)
+    return HttpResponse("OK")
 
 

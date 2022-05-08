@@ -17659,3 +17659,17 @@ pre[class*="language-"] {
   display: flex;
   justify-content: space-between;
 }
+
+.tables{
+  display: flex;
+  justify-content: space-between;
+}
+
+.tables table{
+  display: inline;
+}
+
+.tables td, .tables th{
+  display: inline-block;
+  margin: 15px;
+}

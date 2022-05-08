@@ -43,52 +43,97 @@
                                         {% endif %}
                                     </div>
                                 </div>
+                                <div class="tables">
+                                    <table class="table-one">
+                                        <tr>
+                                            <th>Investors</th>
+                                            <th>User</th>
+                                            <th>Phone</th>
+                                        </tr>
+                                        {% for investor in investors %}
+                                            <tr>
+                                                <td> => </td>
+                                                <td>{{ investor.user }}</td>
+                                                <td>{{ investor.phone_number }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                    <table class="table-two">
+                                        <tr>
+                                            <th>Buyers</th>
+                                            <th>User</th>
+                                            <th>Phone</th>
+                                        </tr>
+                                        {% for buyer in buyers %}
+                                            <tr>
+                                                <td> => </td>
+                                                <td>{{ buyer.user }}</td>
+                                                <td>{{ buyer.phone_number }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                    <table class="table-three">
+                                        <tr>
+                                            <th>Customers</th>
+                                            <th>User</th>
+                                            <th>Phone</th>
+                                        </tr>
+                                        {% for customer in customers %}
+                                            <tr>
+                                                <td> => </td>
+                                                <td>{{ customer.user }}</td>
+                                                <td>{{ customer.phone_number }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <footer class="footer py-4  ">
-                <div class="container-fluid">
-                    <div class="row align-items-center justify-content-lg-between">
-                        <div class="col-lg-6 mb-lg-0 mb-4">
-                            <div class="copyright text-center text-sm text-muted text-lg-start">
-                                ©
-                                <script>
-                                    document.write(new Date().getFullYear())
-                                </script>
-                                ,
-                                made with <i class="fa fa-heart"></i> by
-                                <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative
-                                    Tim</a>
-                                for a better web.
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <ul class="nav nav-footer justify-content-center justify-content-lg-end">
-                                <li class="nav-item">
-                                    <a href="https://www.creative-tim.com" class="nav-link text-muted" target="_blank">Creative
-                                        Tim</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="https://www.creative-tim.com/presentation" class="nav-link text-muted"
-                                       target="_blank">About Us</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="https://www.creative-tim.com/blog" class="nav-link text-muted"
-                                       target="_blank">Blog</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="https://www.creative-tim.com/license" class="nav-link pe-0 text-muted"
-                                       target="_blank">License</a>
-                                </li>
-                            </ul>
+        <footer class="footer py-4  ">
+            <div class="container-fluid">
+                <div class="row align-items-center justify-content-lg-between">
+                    <div class="col-lg-6 mb-lg-0 mb-4">
+                        <div class="copyright text-center text-sm text-muted text-lg-start">
+                            ©
+                            <script>
+                                document.write(new Date().getFullYear())
+                            </script>
+                            ,
+                            made with <i class="fa fa-heart"></i> by
+                            <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative
+                                Tim</a>
+                            for a better web.
                         </div>
                     </div>
+                    <div class="col-lg-6">
+                        <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+                            <li class="nav-item">
+                                <a href="https://www.creative-tim.com" class="nav-link text-muted" target="_blank">Creative
+                                    Tim</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://www.creative-tim.com/presentation" class="nav-link text-muted"
+                                   target="_blank">About Us</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://www.creative-tim.com/blog" class="nav-link text-muted"
+                                   target="_blank">Blog</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://www.creative-tim.com/license" class="nav-link pe-0 text-muted"
+                                   target="_blank">License</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </footer>
-        </div>
+            </div>
+        </footer>
+    </div>
     </div>
 {% endblock main %}
 
@@ -134,7 +179,7 @@
             req.send();
         }
 
-        function change_content(){
+        function change_content() {
             let element = document.getElementById("content-area")
             const req = new XMLHttpRequest();
             req.onload = function () {
