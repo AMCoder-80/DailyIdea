@@ -5,8 +5,7 @@ from . import models
 from django.views.decorators.csrf import csrf_exempt
 from django.views import generic
 import json, requests
-
-
+from random import choice
 
 # Create your views here.
 
@@ -28,6 +27,15 @@ error_message = """
 """
 
 TOKEN = "5178760524:AAHwUq8bPzxmkDmO0dXaUqbyAhKC9Fev1pM"
+
+
+def get_user(idea):
+    adj = ['ایده پرداز', 'خلاق', 'آفرینشگر', 'مبتکر', 'دانا', 'اندیشمند', 'خوش فکر', 'مدبر', 'مبدع', 'نیک اندیش',
+           'هنرمند', 'آرتیست', 'خبره', 'اندیشگر', 'آنده نگر', 'آفریننده']
+    if idea.user != 'None':
+        text = f'💡{choice(adj)}: '
+        return text + f"{idea.user}"
+    return ''
 
 
 @csrf_exempt
@@ -67,18 +75,20 @@ def change_status(request, state, pk):
             idea.save()
             if idea.status == 'A':
                 markup = json.dumps({"inline_keyboard": [[
-                    {"text": "من سرمایه گذاری میکنم",
-                     "callback_data": "invest"},
-                    {"text": "من مشتریش رو دارم",
-                     "callback_data": "customer"}
-                ],
-                [
                     {"text": "من اولین مشتریش هستم",
                      "callback_data": "buyer"},
-                ]]})
+                    {"text": "من ایده بهتری دارم",
+                     "callback_data": "improve"}
+                ],
+                    [
+                        {"text": "من مشتریش رو دارم",
+                         "callback_data": "customer"},
+                        {"text": "من سرمایه گذاری میکنم",
+                         "callback_data": "invest"},
+                    ]]})
                 data = {
                     "chat_id": "@IdeaDaily",
-                    "text": f"{idea.content}\n*{idea.user}\n*@IdeaDaily",
+                    "text": f"{idea.content}\n\n{get_user(idea)}\n\n@IdeaDaily",
                     "reply_markup": markup
                 }
                 data2 = {
@@ -131,10 +141,11 @@ class IdeaDetail(generic.DetailView):
 
 
 @csrf_exempt
-def change_content(request, content, pk):
+def change_content(request, content, user, pk):
     if request.method == 'POST':
         idea = models.Idea.objects.get(pk=pk)
         idea.content = content
+        idea.user = user
         idea.save()
         return HttpResponse("OK")
     else:
@@ -162,14 +173,14 @@ def get_idea(request, pk):
     except Exception as e:
         return HttpResponse(e)
 
+
 @csrf_exempt
 def save_req(request):
     try:
         idea = models.Idea.objects.get(content__icontains=request.POST['content'])
-        req = models.Requester.objects.create(user=request.POST['user'], phone_number=request.POST['phone'], type=request.POST['type'])
+        req = models.Requester.objects.create(user=request.POST['user'], phone_number=request.POST['phone'],
+                                              type=request.POST['type'])
         idea.requester.add(req)
     except Exception as e:
         return HttpResponse(e)
     return HttpResponse("OK")
-
-

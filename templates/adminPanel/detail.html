@@ -16,6 +16,7 @@
                                 <div class="content-box">
                                     <h4>Content:</h4>
                                     <textarea class="idea-content" id="content-area">{{ idea.content }}</textarea>
+                                    <input id="user-id" type="text" value="{{ idea.user }}">
                                     <div class="content-btn">
                                         <button onclick="change_content()" class="btn btn-success">Save changes</button>
                                     </div>
@@ -181,6 +182,7 @@
 
         function change_content() {
             let element = document.getElementById("content-area")
+            let user = document.getElementById("user-id")
             const req = new XMLHttpRequest();
             req.onload = function () {
                 if (this.status === 200 && this.readyState === 4) {
@@ -191,7 +193,7 @@
                     }
                 }
             }
-            req.open("POST", "/content/change/" + element.value + "/" + {{ idea.pk }} +"/", true);
+            req.open("POST", "/content/change/" + element.value + "/" + user.value + "/" + {{ idea.pk }} +"/", true);
             req.send();
         }
 

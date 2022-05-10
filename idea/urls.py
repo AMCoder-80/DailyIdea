@@ -13,6 +13,6 @@ urlpatterns = [
     path('idea/<str:status>/', views.idea),
     path('status/change/<str:state>/<int:pk>/', views.change_status),
     path('cat/change/<int:id>/<int:pk>/', views.change_cat),
-    path('content/change/<str:content>/<int:pk>/', views.change_content),
+    path('content/change/<str:content>/<str:user>/<int:pk>/', views.change_content),
     path('save_req/', views.save_req),
 ]
