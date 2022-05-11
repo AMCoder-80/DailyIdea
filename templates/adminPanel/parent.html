@@ -55,7 +55,8 @@
     <div class="collapse navbar-collapse  w-auto  max-height-vh-100" id="sidenav-collapse-main">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link text-white{% if res.url_name == 'test' %} bg-gradient-primary{% endif %}" href="{% url 'idea:test' %}">
+                <a class="nav-link text-white{% if res.url_name == 'test' %} bg-gradient-primary{% endif %}"
+                   href="{% url 'idea:test' %}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">dashboard</i>
                     </div>
@@ -63,19 +64,30 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white {% if res.url_name == 'table' %}bg-gradient-primary{% endif %}" href="{% url 'idea:table' %}">
+                <a class="nav-link text-white {% if res.url_name == 'table' %}bg-gradient-primary{% endif %}"
+                   href="{% url 'idea:table' %}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">table_view</i>
                     </div>
                     <span class="nav-link-text ms-1">Ideas Table</span>
                 </a>
             </li>
-        <li class="nav-item">
-                <a class="nav-link text-white {% if request.resolver_match.url_name == 'cat_views' %}bg-gradient-primary{% endif %}" href="{% url 'idea:cat_views' %}">
+            <li class="nav-item">
+                <a class="nav-link text-white {% if request.resolver_match.url_name == 'cat_views' %}bg-gradient-primary{% endif %}"
+                   href="{% url 'idea:cat_views' %}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">table_view</i>
                     </div>
                     <span class="nav-link-text ms-1">Categories Table</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white {% if request.resolver_match.url_name == 'users' %}bg-gradient-primary{% endif %}"
+                   href="{% url 'idea:users' 'recent' %}">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">table_view</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Users Table</span>
                 </a>
             </li>
             <li class="nav-item">

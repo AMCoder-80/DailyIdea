@@ -1,4 +1,5 @@
 from django.db import models
+from user.models import User
 
 # Create your models here.
 
@@ -32,10 +33,10 @@ class Idea(models.Model):
     )
 
     content = models.TextField()
-    user = models.CharField(max_length=50, default='AnonymousUser')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='ideas', null=True, blank=True)
     status = models.CharField(choices=CHOICES, max_length=1, default=PENDING)
     chat_id = models.CharField(max_length=100)
-    category = models.ForeignKey(Category, null=True, blank=True, related_name="ideas", on_delete=models.SET_NULL)
+    category = models.ManyToManyField(Category, related_name="ideas", blank=True)
     created = models.DateTimeField(auto_now_add=True)
     requester = models.ManyToManyField('Requester', blank=True)
     objects = models.Manager.from_queryset(MyManager)()
@@ -57,7 +58,7 @@ class Idea(models.Model):
         return answers[self.status]
 
     def __str__(self):
-        return self.user
+        return str(self.user)
 
 
 class Requester(models.Model):

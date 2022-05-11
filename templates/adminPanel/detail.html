@@ -16,7 +16,9 @@
                                 <div class="content-box">
                                     <h4>Content:</h4>
                                     <textarea class="idea-content" id="content-area">{{ idea.content }}</textarea>
-                                    <input id="user-id" type="text" value="{{ idea.user }}">
+                                    <input id="user-id"
+                                           style="border-radius: 5px; border: 1px solid gray; text-align: center"
+                                           type="text" value="{{ idea.user }}">
                                     <div class="content-btn">
                                         <button onclick="change_content()" class="btn btn-success">Save changes</button>
                                     </div>
@@ -53,7 +55,7 @@
                                         </tr>
                                         {% for investor in investors %}
                                             <tr>
-                                                <td> => </td>
+                                                <td> =></td>
                                                 <td>{{ investor.user }}</td>
                                                 <td>{{ investor.phone_number }}</td>
                                             </tr>
@@ -67,7 +69,7 @@
                                         </tr>
                                         {% for buyer in buyers %}
                                             <tr>
-                                                <td> => </td>
+                                                <td> =></td>
                                                 <td>{{ buyer.user }}</td>
                                                 <td>{{ buyer.phone_number }}</td>
                                             </tr>
@@ -81,7 +83,7 @@
                                         </tr>
                                         {% for customer in customers %}
                                             <tr>
-                                                <td> => </td>
+                                                <td> =></td>
                                                 <td>{{ customer.user }}</td>
                                                 <td>{{ customer.phone_number }}</td>
                                             </tr>

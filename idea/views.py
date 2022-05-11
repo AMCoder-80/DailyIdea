@@ -2,7 +2,10 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.http import HttpResponse
 from . import models
+from django.db.models.aggregates import Count
+from user.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.views import LoginView
 from django.views import generic
 import json, requests
 from random import choice
@@ -43,8 +46,13 @@ def create_idea(request):
     if request.method == 'GET':
         pass
     elif request.method == 'POST':
-        print({i: ''.join(j) for i, j in request.POST.items()})
-        models.Idea.objects.create(**{i: ''.join(j) for i, j in request.POST.items()})
+        name = request.POST.get('user')
+        idea = models.Idea(content=request.POST['content'], status=request.POST['status'],
+                                   chat_id=request.POST['chat_id'])
+        if name:
+            user, created = User.objects.get_or_create(name=name)
+            idea.user = user
+        idea.save()
         return HttpResponse("OK")
 
 
@@ -88,8 +96,9 @@ def change_status(request, state, pk):
                     ]]})
                 data = {
                     "chat_id": "@IdeaDaily",
-                    "text": f"{idea.content}\n\n{get_user(idea)}\n\n@IdeaDaily",
-                    "reply_markup": markup
+                    "text": f"{idea.content}\n\n{get_user(idea)}\n\n@IdeaDaily|[هر روز یک ایده بده](https://t.me/IdeaDailybot/start)",
+                    "reply_markup": markup,
+                    "parse_mode": "Markdown"
                 }
                 data2 = {
                     "chat_id": idea.chat_id,
@@ -184,3 +193,17 @@ def save_req(request):
     except Exception as e:
         return HttpResponse(e)
     return HttpResponse("OK")
+
+
+class LoginUser(LoginView):
+    template_name = 'adminPanel/login.html'
+    redirect_authenticated_user = reverse_lazy('idea:test')
+
+
+def user_table(request, filter=None):
+    users = User.objects.all().annotate(idea_count=Count('ideas'))
+    if filter == 'recent':
+        users = users.order_by('-id')
+    elif filter == 'active':
+        users = users.order_by('-idea_count')
+    return render(request, 'adminPanel/user_table.html', {'users': users})
