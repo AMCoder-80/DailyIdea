@@ -52,7 +52,7 @@ def create_idea(request):
                                chat_id=user_id)
 
             user, created = User.objects.get_or_create(chat_id=user_id)
-            user.name = request.POST.get('name')
+            user.name = request.POST.get('user')
             idea.user = user
             idea.save()
         except Exception as e:
