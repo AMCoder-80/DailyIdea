@@ -157,9 +157,9 @@ class IdeaDetail(generic.DetailView):
 def change_content(request, content, user, pk):
     if request.method == 'POST':
         idea = models.Idea.objects.get(pk=pk)
-        user = models.User.objects.get(chat_id=idea.chat_id)
+        user_data = models.User.objects.get(chat_id=idea.chat_id)
         idea.content = content
-        user.name = user
+        user_data.name = user
         idea.save()
         return HttpResponse("OK")
     else:
