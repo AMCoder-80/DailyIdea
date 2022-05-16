@@ -46,13 +46,17 @@ def create_idea(request):
     if request.method == 'GET':
         pass
     elif request.method == 'POST':
-        name = request.POST.get('user')
-        idea = models.Idea(content=request.POST['content'], status=request.POST['status'],
-                                   chat_id=request.POST['chat_id'])
-        if name:
-            user, created = User.objects.get_or_create(name=name)
+        try:
+            user_id = request.POST.get('chat_id')
+            idea = models.Idea(content=request.POST['content'], status=request.POST['status'],
+                               chat_id=user_id)
+
+            user, created = User.objects.get_or_create(chat_id=user_id)
+            user.name = request.POST.get('name')
             idea.user = user
-        idea.save()
+            idea.save()
+        except Exception as e:
+            return HttpResponse(e)
         return HttpResponse("OK")
 
 
@@ -153,8 +157,9 @@ class IdeaDetail(generic.DetailView):
 def change_content(request, content, user, pk):
     if request.method == 'POST':
         idea = models.Idea.objects.get(pk=pk)
+        user = models.User.objects.get(chat_id=idea.chat_id)
         idea.content = content
-        idea.user = user
+        user.name = user
         idea.save()
         return HttpResponse("OK")
     else:
