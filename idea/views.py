@@ -15,29 +15,27 @@ from random import choice
 success_message = """
 به به!😍
 مژده بدید🎉
-ایده شما توسط ادمین تایید شد و در کانال زیر قرار گرفت😊
-@DailyIdea
-💖هر هفته به بهترین ایده جایزه میدیم🎁
-برای گروه ها و مخاطب هاتون بفرستید😉
-بلکه ایده تون رو لایک کنند و جایزه بگیرید🏆
+ایده شما توسط ادمین تایید شد و در کانال قرار گرفت😊
+
+لطفا برای گروه ها و مخاطبِ هدف ارسال کنید😉
 """
 
 error_message = """
 سلام دوست عزیز🙋‍
 متاسقانه ایده شما توسط ادمین تایید نشد
 مبتونید برای مشاهده نمونه ایده های بیشتر به کانال زیر بپیوندید
-@DailyIdea
+🆔 @IdeaDaily
 """
 
-TOKEN = "5178760524:AAHwUq8bPzxmkDmO0dXaUqbyAhKC9Fev1pM"
+TOKEN = "5178760524:AAHJM7-Eoij4gSMvYLv8gGwjkkbIBxoTcLw"
 
 
 def get_user(idea):
-    adj = ['ایده پرداز', 'خلاق', 'آفرینشگر', 'مبتکر', 'دانا', 'اندیشمند', 'خوش فکر', 'مدبر', 'مبدع', 'نیک اندیش',
-           'هنرمند', 'آرتیست', 'خبره', 'اندیشگر', 'آنده نگر', 'آفریننده']
-    if idea.user != 'None':
+    adj = ['ایده‌پرداز', 'خلاق', 'آفرینشگر', 'مبتکر', 'دانا', 'اندیشمند', 'خوش‌فکر', 'مدبر', 'مبدع', 'نیک‌اندیش',
+           'هنرمند', 'آرتیست', 'خبره', 'اندیشگر', 'آینده‌نگر', 'آفریننده']
+    if idea.user.name != 'None':
         text = f'💡{choice(adj)}: '
-        return text + f"{idea.user}"
+        return '\n\n' + text + f"{idea.user}"
     return ''
 
 
@@ -52,9 +50,10 @@ def create_idea(request):
                                chat_id=user_id)
 
             user, created = User.objects.get_or_create(chat_id=user_id)
-            user.name = request.POST.get('user')
+            user.name = request.POST['user']
             idea.user = user
             idea.save()
+            user.save()
         except Exception as e:
             return HttpResponse(e)
         return HttpResponse("OK")
@@ -75,7 +74,7 @@ def idea(request, status=None):
     status_ref = status if status else 'null'
     print(request.resolver_match)
     return render(request, 'adminPanel/table.html',
-                  {'ideas': ideas, 'status_ref': status_ref, 'res': request.resolver_match})
+                  {'ideas': ideas.order_by('-id'), 'status_ref': status_ref, 'res': request.resolver_match})
 
 
 @csrf_exempt
@@ -87,26 +86,38 @@ def change_status(request, state, pk):
             idea.save()
             if idea.status == 'A':
                 markup = json.dumps({"inline_keyboard": [[
-                    {"text": "من اولین مشتریش هستم",
+                    {"text": "ایول من اولین مشتری‌ام",
                      "callback_data": "buyer"},
-                    {"text": "من ایده بهتری دارم",
+                    {"text": "برای بهبودش ایده دارم",
                      "callback_data": "improve"}
-                ],
+                    ],
                     [
                         {"text": "من مشتریش رو دارم",
                          "callback_data": "customer"},
-                        {"text": "من سرمایه گذاری میکنم",
+                        {"text": "حاضرم سرمایه‌گذاری کنم",
                          "callback_data": "invest"},
-                    ]]})
+                    ],
+                    [
+                        {"text": "من میخوام یک ایده ثبت کنم",
+                         "url": "https://t.me/IdeaDailybot?start"},
+                    ]
+                ]})
+                markup2 = json.dumps({"inline_keyboard": [[
+                    {"text": "برو به کانال",
+                     "url": 'https://t.me/IdeaDaily'},
+                    {"text": "یک ایده دیگه دارم",
+                     "callback_data": 'start_new'}
+                ]]})
                 data = {
                     "chat_id": "@IdeaDaily",
-                    "text": f"{idea.content}\n\n{get_user(idea)}\n\n@IdeaDaily|[هر روز یک ایده بده](https://t.me/IdeaDailybot/start)",
+                    "text": f"« »\nℹ {idea.id}\n\n✍ {idea.content}{get_user(idea)}\n\n🆔 @IdeaDaily | [هر روز یک ایده بده](https://t.me/IdeaDailybot?start)",
                     "reply_markup": markup,
                     "parse_mode": "Markdown"
                 }
                 data2 = {
                     "chat_id": idea.chat_id,
                     "text": success_message,
+                    "reply_markup": markup2,
                 }
                 requests.get(
                     f"https://api.telegram.org/bot{TOKEN}/sendMessage", data=data
@@ -115,9 +126,16 @@ def change_status(request, state, pk):
                     f"https://api.telegram.org/bot{TOKEN}/sendMessage", data=data2
                 )
             elif idea.status == 'R':
+                markup2 = json.dumps({"inline_keyboard": [[
+                    {"text": "برو به کانال",
+                     "url": 'https://t.me/IdeaDaily'},
+                    {"text": "یک ایده دیگه دارم",
+                     "callback_data": 'lets_go'}
+                ]]})
                 data = {
                     "chat_id": idea.chat_id,
                     "text": error_message,
+                    "reply_markup": markup2,
                 }
                 requests.get(
                     f"https://api.telegram.org/bot{TOKEN}/sendMessage", data=data)
@@ -157,10 +175,11 @@ class IdeaDetail(generic.DetailView):
 def change_content(request, content, user, pk):
     if request.method == 'POST':
         idea = models.Idea.objects.get(pk=pk)
-        user_data = models.User.objects.get(chat_id=idea.chat_id)
+        user_data = User.objects.get(chat_id=idea.chat_id)
         idea.content = content
         user_data.name = user
         idea.save()
+        user_data.save()
         return HttpResponse("OK")
     else:
         return HttpResponse("Failed")
@@ -183,7 +202,7 @@ class CreateCategory(generic.CreateView):
 def get_idea(request, pk):
     try:
         idea = models.Idea.objects.get(id=pk)
-        return HttpResponse(f"{idea.user}-{idea.content}-{idea.chat_id}")
+        return HttpResponse(f"{idea.user.name}-{idea.content}-{idea.chat_id}")
     except Exception as e:
         return HttpResponse(e)
 
@@ -192,7 +211,8 @@ def get_idea(request, pk):
 def save_req(request):
     try:
         idea = models.Idea.objects.get(content__icontains=request.POST['content'])
-        req = models.Requester.objects.create(user=request.POST['user'], phone_number=request.POST['phone'],
+        user = User.objects.get_or_create(name=request.POST['user'], chat_id=request.POST['chat_id'])
+        req = models.Requester.objects.create(user=user, phone_number=request.POST['phone'],
                                               type=request.POST['type'])
         idea.requester.add(req)
     except Exception as e:

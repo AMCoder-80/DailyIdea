@@ -13,6 +13,7 @@ urlpatterns = [
     path('categories/create/', views.CreateCategory.as_view(), name="create_cat"),
     path('idea/<int:pk>/', views.IdeaDetail.as_view(), name='detail'),
     path('idea/<str:status>/', views.idea),
+    path('get/idea/<int:pk>/', views.get_idea),
     path('status/change/<str:state>/<int:pk>/', views.change_status),
     path('cat/change/<int:id>/<int:pk>/', views.change_cat),
     path('content/change/<str:content>/<str:user>/<int:pk>/', views.change_content),

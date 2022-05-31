@@ -36,7 +36,7 @@ class Idea(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='ideas', null=True, blank=True)
     status = models.CharField(choices=CHOICES, max_length=1, default=PENDING)
     chat_id = models.CharField(max_length=100)
-    category = models.ManyToManyField(Category, related_name="ideas", blank=True)
+    category = models.ForeignKey(Category, related_name="ideas", blank=True, null=True, on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
     requester = models.ManyToManyField('Requester', blank=True)
     objects = models.Manager.from_queryset(MyManager)()
@@ -67,6 +67,6 @@ class Requester(models.Model):
         ('B', 'Buyer'),
         ('C', 'Customer')
     )
-    user = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=100)
     type = models.CharField(max_length=5, choices=TYPES)
