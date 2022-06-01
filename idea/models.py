@@ -67,6 +67,6 @@ class Requester(models.Model):
         ('B', 'Buyer'),
         ('C', 'Customer')
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.CharField(max_length=150)
     phone_number = models.CharField(max_length=100)
     type = models.CharField(max_length=5, choices=TYPES)

@@ -110,7 +110,7 @@ def change_status(request, state, pk):
                 ]]})
                 data = {
                     "chat_id": "@IdeaDaily",
-                    "text": f"« »\nℹ {idea.id}\n\n✍ {idea.content}{get_user(idea)}\n\n🆔 @IdeaDaily | [هر روز یک ایده بده](https://t.me/IdeaDailybot?start)",
+                    "text": f" \nℹ {idea.id}\n\n✍ {idea.content}{get_user(idea)}\n\n🆔 @IdeaDaily | [هر روز یک ایده بده](https://t.me/IdeaDailybot?start)",
                     "reply_markup": markup,
                     "parse_mode": "Markdown"
                 }
@@ -211,8 +211,7 @@ def get_idea(request, pk):
 def save_req(request):
     try:
         idea = models.Idea.objects.get(content__icontains=request.POST['content'])
-        user = User.objects.get_or_create(name=request.POST['user'], chat_id=request.POST['chat_id'])
-        req = models.Requester.objects.create(user=user, phone_number=request.POST['phone'],
+        req = models.Requester.objects.create(user=request.POST['user'], phone_number=request.POST['phone'],
                                               type=request.POST['type'])
         idea.requester.add(req)
     except Exception as e:

@@ -56,7 +56,7 @@
                                         {% for investor in investors %}
                                             <tr>
                                                 <td> =></td>
-                                                <td>{{ investor.user.name }}</td>
+                                                <td>{{ investor.user }}</td>
                                                 <td>{{ investor.phone_number }}</td>
                                             </tr>
                                         {% endfor %}
@@ -70,7 +70,7 @@
                                         {% for buyer in buyers %}
                                             <tr>
                                                 <td> =></td>
-                                                <td>{{ buyer.user.name }}</td>
+                                                <td>{{ buyer.user }}</td>
                                                 <td>{{ buyer.phone_number }}</td>
                                             </tr>
                                         {% endfor %}
@@ -84,7 +84,7 @@
                                         {% for customer in customers %}
                                             <tr>
                                                 <td> =></td>
-                                                <td>{{ customer.user.name }}</td>
+                                                <td>{{ customer.user }}</td>
                                                 <td>{{ customer.phone_number }}</td>
                                             </tr>
                                         {% endfor %}
