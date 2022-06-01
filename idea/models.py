@@ -70,3 +70,9 @@ class Requester(models.Model):
     user = models.CharField(max_length=150)
     phone_number = models.CharField(max_length=100)
     type = models.CharField(max_length=5, choices=TYPES)
+
+
+class ImprovedIdea(models.Model):
+    base_idea = models.ForeignKey(Idea, on_delete=models.CASCADE)
+    new_idea = models.TextField()
+    user = models.CharField(max_length=150)

@@ -19,4 +19,5 @@ urlpatterns = [
     path('content/change/<str:content>/<str:user>/<int:pk>/', views.change_content),
     path('save_req/', views.save_req),
     path('login/', views.LoginUser.as_view(), name="login"),
+    path('save_improved/', views.save_improved, name='save_improved'),
 ]

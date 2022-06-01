@@ -9,6 +9,8 @@ from django.contrib.auth.views import LoginView
 from django.views import generic
 import json, requests
 from random import choice
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 
@@ -59,12 +61,14 @@ def create_idea(request):
         return HttpResponse("OK")
 
 
+@login_required
 def index(request):
     ideas = models.Idea.objects.all()
     print(request.resolver_match)
     return render(request, 'adminPanel/index.html', {'ideas': ideas, 'res': request.resolver_match})
 
 
+@login_required
 def idea(request, status=None):
     print(status)
     if status:
@@ -110,7 +114,7 @@ def change_status(request, state, pk):
                 ]]})
                 data = {
                     "chat_id": "@IdeaDaily",
-                    "text": f" \nℹ {idea.id}\n\n✍ {idea.content}{get_user(idea)}\n\n🆔 @IdeaDaily | [هر روز یک ایده بده](https://t.me/IdeaDailybot?start)",
+                    "text": f"\r\nℹ {idea.id}\n\n✍ {idea.content}{get_user(idea)}\n\n🆔 @IdeaDaily | [هر روز یک ایده بده](https://t.me/IdeaDailybot?start)",
                     "reply_markup": markup,
                     "parse_mode": "Markdown"
                 }
@@ -157,7 +161,7 @@ def change_cat(request, id, pk):
         return HttpResponse("Method not allowed")
 
 
-class IdeaDetail(generic.DetailView):
+class IdeaDetail(generic.DetailView, LoginRequiredMixin):
     model = models.Idea
     # fields = ['content', 'category', 'status']
     template_name = 'adminPanel/detail.html'
@@ -168,6 +172,7 @@ class IdeaDetail(generic.DetailView):
         context['investors'] = models.Requester.objects.filter(idea__pk=self.kwargs['pk'], type='I')
         context['customers'] = models.Requester.objects.filter(idea__pk=self.kwargs['pk'], type='C')
         context['buyers'] = models.Requester.objects.filter(idea__pk=self.kwargs['pk'], type='B')
+        context['improved'] = models.ImprovedIdea.objects.filter(base_idea__pk=self.kwargs['pk'])
         return context
 
 
@@ -185,13 +190,13 @@ def change_content(request, content, user, pk):
         return HttpResponse("Failed")
 
 
-class CategoryList(generic.ListView):
+class CategoryList(generic.ListView, LoginRequiredMixin):
     model = models.Category
     template_name = 'adminPanel/cat_table.html'
     context_object_name = 'cats'
 
 
-class CreateCategory(generic.CreateView):
+class CreateCategory(generic.CreateView, LoginRequiredMixin):
     model = models.Category
     fields = ['name']
     success_url = reverse_lazy('idea:cat_views')
@@ -211,7 +216,8 @@ def get_idea(request, pk):
 def save_req(request):
     try:
         idea = models.Idea.objects.get(content__icontains=request.POST['content'])
-        req = models.Requester.objects.create(user=request.POST['user'], phone_number=request.POST['phone'],
+        user = request.POST['user']
+        req = models.Requester.objects.create(user=user[user.index(':')+1:], phone_number=request.POST['phone'],
                                               type=request.POST['type'])
         idea.requester.add(req)
     except Exception as e:
@@ -224,6 +230,7 @@ class LoginUser(LoginView):
     redirect_authenticated_user = reverse_lazy('idea:test')
 
 
+@login_required
 def user_table(request, filter=None):
     users = User.objects.all().annotate(idea_count=Count('ideas'))
     if filter == 'recent':
@@ -231,3 +238,12 @@ def user_table(request, filter=None):
     elif filter == 'active':
         users = users.order_by('-idea_count')
     return render(request, 'adminPanel/user_table.html', {'users': users})
+
+
+def save_improved(request):
+    try:
+        base_idea = models.Idea.objects.get(content__icontains=request.POST['content'])
+        models.ImprovedIdea.objects.create(base_idea=base_idea, new_idea=request.POST['new_idea'], user=request.POST['user'])
+    except Exception as e:
+        return HttpResponse(e)
+    return HttpResponse('OK')

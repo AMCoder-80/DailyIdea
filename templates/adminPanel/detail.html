@@ -90,6 +90,22 @@
                                         {% endfor %}
                                     </table>
                                 </div>
+                                <div class="tables">
+                                    <table class="table-one">
+                                        <tr>
+                                            <th>Improved Ideas</th>
+                                            <th>User</th>
+                                            <th>Content</th>
+                                        </tr>
+                                        {% for imp in improved %}
+                                            <tr>
+                                                <td> =></td>
+                                                <td>{{ imp.user }}</td>
+                                                <td>{{ imp.new_idea|truncatewords:15 }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
